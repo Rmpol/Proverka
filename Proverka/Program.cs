@@ -192,9 +192,6 @@ namespace Proverka
                 Console.WriteLine("Processing " + collectionName + ":");
                 GetTimeAndPlaceOfWorkAll(experience, informationOfWork);
 
-                // Здесь вы можете выполнять операции с коллекцией informationOfWork,
-                // сохранять ее или использовать по своему усмотрению
-
                 counter++;
                 Console.WriteLine();
             }
