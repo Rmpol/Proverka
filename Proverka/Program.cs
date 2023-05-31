@@ -14,38 +14,43 @@ namespace Proverka
         {
             string filePath = @"C:\Users\Admin\Desktop\Рабочая\for me\C# developer Resume.pdf";
 
-            //Получаем коллекцию состоящую из строк со всех страниц pdf файла
+            // Получаем коллекцию строк со всех страниц PDF-файла
             List<string> mergeLinesAllPages = ExtractInformationFromPdfFile(filePath);
 
-            //Получаем коллекцию без лишней информации
+            // Получаем коллекцию опыта работы без лишней информации
             List<string> experience = GetExperience(mergeLinesAllPages);
 
-            if(experience.Count > 0)
+            //Проверка на наличие стажа работы
+            if (experience.Count > 0)
             {
-                //удаляем все элементы со значением "Резюме обновлено"
+                // Удаляем все элементы со значением "Резюме обновлено"
                 RemoveResumeUpdates(experience);
 
-                //Получаем общий стаж работы
+                // Получаем общий стаж работы
                 string totalWorkExperience = ProcessExperience(experience[0], experience);
 
                 Console.WriteLine($"Общий стаж работы: {totalWorkExperience}\n");
 
-                //получаем информацию о последней работе
+                // Получаем информацию о последней работе
                 List<string> informationOfWork = GetTimeAndPlaceOfWork(experience);
 
-                //получаем информацию о предпоследней работе
+                // Получаем информацию о предпоследней работе
                 List<string> informationOfWork2 = GetTimeAndPlaceOfWork(experience);
 
-                //получаем информацию о предпоследней работе
+                // Получаем информацию о предпредпоследней работе
                 List<string> informationOfWork3 = GetTimeAndPlaceOfWork(experience);
             }
-
             else
-
+            {
                 Console.WriteLine("Опыта работы нет, либо не был указан.");
+            }
         }
 
-
+        /// <summary>
+        /// Извлекает информацию из PDF-файла.
+        /// </summary>
+        /// <param name="filePath">Путь к PDF-файлу.</param>
+        /// <returns>Коллекция строк со всех страниц PDF-файла.</returns>
         static List<string> ExtractInformationFromPdfFile(string filePath)
         {
             List<string> mergeLinesAllPages = new List<string>();
@@ -67,12 +72,17 @@ namespace Proverka
             }
             catch (IOException ex)
             {
-                Console.WriteLine("Error reading the PDF file: {0}", ex.Message);
+                Console.WriteLine("Ошибка при чтении PDF-файла: {0}", ex.Message);
             }
 
             return mergeLinesAllPages;
         }
 
+        /// <summary>
+        /// Получает коллекцию опыта работы без лишней информации.
+        /// </summary>
+        /// <param name="mergeLinesAllPages">Коллекция строк со всех страниц PDF-файла.</param>
+        /// <returns>Коллекция опыта работы без лишней информации.</returns>
         static List<string> GetExperience(List<string> mergeLinesAllPages)
         {
             List<string> experience = new List<string>();
@@ -90,7 +100,7 @@ namespace Proverka
                 else if (line.StartsWith("Образование"))
                 {
                     foundEducation = true;
-                    break; // Прерываем цикл, так как мы достигли элемента "Образование"
+                    break; // Прерываем цикл, так как достигли элемента "Образование"
                 }
 
                 if (foundExperience && !foundEducation)
@@ -102,6 +112,12 @@ namespace Proverka
             return experience;
         }
 
+        /// <summary>
+        /// Обрабатывает строку с информацией об опыте работы и возвращает общий стаж работы.
+        /// </summary>
+        /// <param name="experienceLine">Строка с информацией об опыте работы.</param>
+        /// <param name="experience">Коллекция опыта работы.</param>
+        /// <returns>Общий стаж работы.</returns>
         static string ProcessExperience(string experienceLine, List<string> experience)
         {
             string totalWorkExperience = "";
@@ -121,13 +137,17 @@ namespace Proverka
                 return null;
             }
 
-            // Удаляем строки из списка experience
+            // Удаляем строки из коллекции опыта работы
             experience = RemoveLines(experience, 0, 1);
 
             return totalWorkExperience;
         }
 
-
+        /// <summary>
+        /// Находит индекс первой цифры в строке.
+        /// </summary>
+        /// <param name="line">Строка для поиска индекса первой цифры.</param>
+        /// <returns>Индекс первой цифры в строке, или -1, если цифра не найдена.</returns>
         static int FindFirstDigitIndex(string line)
         {
             for (int i = 0; i < line.Length; i++)
@@ -141,6 +161,11 @@ namespace Proverka
             return -1;
         }
 
+        /// <summary>
+        /// Удаляет строки с информацией об обновлении резюме из коллекции опыта работы.
+        /// </summary>
+        /// <param name="experience">Коллекция опыта работы.</param>
+        /// <returns>Коллекция опыта работы после удаления строк об обновлении резюме.</returns>
         public static List<string> RemoveResumeUpdates(List<string> experience)
         {
             List<string> itemsToRemove = experience.Where(item => item.StartsWith("Резюме обновлено")).ToList();
@@ -154,13 +179,24 @@ namespace Proverka
             return experience;
         }
 
-
+        /// <summary>
+        /// Удаляет строки из коллекции строк.
+        /// </summary>
+        /// <param name="lines">Коллекция строк.</param>
+        /// <param name="startIndex">Индекс начала удаления.</param>
+        /// <param name="count">Количество строк для удаления.</param>
+        /// <returns>Коллекция строк после удаления.</returns>
         static List<string> RemoveLines(List<string> lines, int startIndex, int count)
         {
             lines.RemoveRange(startIndex, count);
             return lines;
         }
 
+        /// <summary>
+        /// Получает информацию о времени и месте работы из коллекции опыта работы.
+        /// </summary>
+        /// <param name="experience">Коллекция опыта работы.</param>
+        /// <returns>Коллекция строк с информацией о времени и месте работы.</returns>
         public static List<string> GetTimeAndPlaceOfWork(List<string> experience)
         {
             List<string> informationOfWork = new List<string>();
@@ -198,6 +234,11 @@ namespace Proverka
             return informationOfWork;
         }
 
+        /// <summary>
+        /// Находит индекс строки, содержащей год и месяц окончания работы.
+        /// </summary>
+        /// <param name="experience">Коллекция опыта работы.</param>
+        /// <returns>Индекс строки с годом и месяцем окончания работы, или -1, если строка не найдена.</returns>
         public static int FindYearMonthIndex(List<string> experience)
         {
             Regex regex = new Regex(@"^[А-Яа-я]+\s\d{4}");
@@ -212,6 +253,5 @@ namespace Proverka
 
             return -1;
         }
-
     }
 }
