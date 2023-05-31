@@ -12,7 +12,7 @@ namespace Proverka
     {
         static void Main(string[] args)
         {
-            string filePath = @"C:\Users\Admin\Desktop\33.pdf";
+            string filePath = @"C:\Users\Admin\Desktop\Рабочая\for me\C# developer Resume.pdf";
 
             //Получаем коллекцию состоящую из строк со всех страниц pdf файла
             List<string> mergeLinesAllPages = ExtractInformationFromPdfFile(filePath);
@@ -20,23 +20,30 @@ namespace Proverka
             //Получаем коллекцию без лишней информации
             List<string> experience = GetExperience(mergeLinesAllPages);
 
-            //удаляем все элементы со значением "Резюме обновлено"
-            RemoveResumeUpdates(experience);
+            if(experience.Count > 0)
+            {
+                //удаляем все элементы со значением "Резюме обновлено"
+                RemoveResumeUpdates(experience);
 
-            //Получаем общий стаж работы
-            string totalWorkExperience = ProcessExperience(experience[0], experience);
+                //Получаем общий стаж работы
+                string totalWorkExperience = ProcessExperience(experience[0], experience);
 
-            //получаем информацию о последней работе
-            List<string> informationOfWork = GetTimeAndPlaceOfWork(experience);
+                Console.WriteLine($"Общий стаж работы: {totalWorkExperience}\n");
 
-            //получаем информацию о предпоследней работе
-            List<string> informationOfWork2 = GetTimeAndPlaceOfWork(experience);
+                //получаем информацию о последней работе
+                List<string> informationOfWork = GetTimeAndPlaceOfWork(experience);
 
+                //получаем информацию о предпоследней работе
+                List<string> informationOfWork2 = GetTimeAndPlaceOfWork(experience);
 
-            //получаем информацию о предпоследней работе
-            List<string> informationOfWork3 = GetTimeAndPlaceOfWork(experience);
+                //получаем информацию о предпоследней работе
+                List<string> informationOfWork3 = GetTimeAndPlaceOfWork(experience);
+            }
+
+            else
+
+                Console.WriteLine("Опыта работы нет, либо не был указан.");
         }
-
 
 
         static List<string> ExtractInformationFromPdfFile(string filePath)
@@ -108,12 +115,18 @@ namespace Proverka
                     totalWorkExperience = experienceLine.Substring(startIndex);
                 }
             }
+            else
+            {
+                Console.WriteLine("Опыта работы нет, либо не был указан.");
+                return null;
+            }
 
             // Удаляем строки из списка experience
             experience = RemoveLines(experience, 0, 1);
 
             return totalWorkExperience;
         }
+
 
         static int FindFirstDigitIndex(string line)
         {
@@ -184,8 +197,6 @@ namespace Proverka
 
             return informationOfWork;
         }
-
-
 
         public static int FindYearMonthIndex(List<string> experience)
         {
