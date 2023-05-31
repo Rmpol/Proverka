@@ -12,7 +12,7 @@ namespace Proverka
     {
         static void Main(string[] args)
         {
-            string filePath = @"C:\Users\User\Desktop\33.pdf";
+            string filePath = @"C:\Users\Admin\Desktop\33.pdf";
 
             //Получаем коллекцию состоящую из строк со всех страниц pdf файла
             List<string> mergeLinesAllPages = ExtractInformationFromPdfFile(filePath);
@@ -26,10 +26,15 @@ namespace Proverka
             //Получаем общий стаж работы
             string totalWorkExperience = ProcessExperience(experience[0], experience);
 
-            GetTimeAndPlaceOfWork(experience);
+            //получаем информацию о последней работе
+            List<string> informationOfWork = GetTimeAndPlaceOfWork(experience);
+
+            //получаем информацию о предпоследней работе
+            List<string> informationOfWork2 = GetTimeAndPlaceOfWork(experience);
 
 
-            //Console.WriteLine(experience);
+            //получаем информацию о предпоследней работе
+            List<string> informationOfWork3 = GetTimeAndPlaceOfWork(experience);
         }
 
 
@@ -143,8 +148,10 @@ namespace Proverka
             return lines;
         }
 
-        public static void GetTimeAndPlaceOfWorkAll(List<string> experience, List<string> informationOfWork)
+        public static List<string> GetTimeAndPlaceOfWork(List<string> experience)
         {
+            List<string> informationOfWork = new List<string>();
+
             if (experience.Count >= 4)
             {
                 string startWork = experience[0];
@@ -165,37 +172,20 @@ namespace Proverka
                 informationOfWork.Add(endWork);
                 informationOfWork.Add(generalInformation);
 
-                Console.WriteLine("Information of Work:");
-                foreach (string info in informationOfWork)
-                {
-                    Console.WriteLine(info);
-                }
+                RemoveLines(experience, 0, endIndex);
+
+                Console.WriteLine("Название компании: {0}\nНачало работы: {1}\nОкончание работы: {2}\nОбщая информация: {3}\n", companyName, startWork, endWork, generalInformation);
+
             }
             else
             {
                 Console.WriteLine("Недостаточно данных для обработки опыта работы.");
             }
+
+            return informationOfWork;
         }
 
-        public static void GetTimeAndPlaceOfWork(List<List<string>> experiences)
-        {
-            int counter = 0;
-            foreach (List<string> experience in experiences)
-            {
-                List<string> informationOfWork = new List<string>();
-                string collectionName = "informationOfWork";
-                if (counter > 0)
-                {
-                    collectionName += "_" + counter;
-                }
 
-                Console.WriteLine("Processing " + collectionName + ":");
-                GetTimeAndPlaceOfWorkAll(experience, informationOfWork);
-
-                counter++;
-                Console.WriteLine();
-            }
-        }
 
         public static int FindYearMonthIndex(List<string> experience)
         {
